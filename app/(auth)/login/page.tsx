@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
@@ -12,6 +12,34 @@ export default function LoginPage() {
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+
+  // Fallback for links that deliver an implicit-flow session (tokens in the
+  // URL hash) instead of a PKCE `?code=` — e.g. links generated via the
+  // Admin API, which our PKCE-only /auth/callback route can't consume.
+  useEffect(() => {
+    const hash = window.location.hash
+    if (hash.includes('access_token')) {
+      const params = new URLSearchParams(hash.slice(1))
+      const access_token = params.get('access_token')
+      const refresh_token = params.get('refresh_token')
+      if (access_token && refresh_token) {
+        const supabase = createClient()
+        supabase.auth.setSession({ access_token, refresh_token }).then(({ error: sessionError }) => {
+          if (sessionError) {
+            setError('Não foi possível confirmar o login. Peça um novo link.')
+          } else {
+            router.push('/')
+            router.refresh()
+          }
+        })
+        return
+      }
+    }
+
+    if (new URLSearchParams(window.location.search).get('error') === 'auth_callback_failed') {
+      setError('Não foi possível confirmar o login. Peça um novo link.')
+    }
+  }, [router])
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
