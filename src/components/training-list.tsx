@@ -44,6 +44,7 @@ export function TrainingList({
       return (
         course.title.toLowerCase().includes(q) ||
         sessionName.toLowerCase().includes(q) ||
+        (course.description?.toLowerCase().includes(q) ?? false) ||
         course.tags.some((tag) => tag.toLowerCase().includes(q))
       )
     })
