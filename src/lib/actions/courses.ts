@@ -119,3 +119,20 @@ export async function moveCourseUp(courseId: string) {
 export async function moveCourseDown(courseId: string) {
   return moveCourse(courseId, 'down')
 }
+
+// Bulk reorder for drag-and-drop — sets sort_order to each id's index in the
+// given order, in one go, rather than repeated neighbor swaps.
+export async function reorderCourses(sessionId: string, orderedCourseIds: string[]) {
+  const supabase = await createServerClient()
+
+  const updates = orderedCourseIds.map((id, index) =>
+    supabase.from('courses').update({ sort_order: index }).eq('id', id).eq('session_id', sessionId)
+  )
+  const results = await Promise.all(updates)
+  const failed = results.find((r) => r.error)
+  if (failed?.error) return toActionError(failed.error)
+
+  revalidatePath('/')
+  revalidatePath('/admin')
+  return { ok: true, error: undefined }
+}
