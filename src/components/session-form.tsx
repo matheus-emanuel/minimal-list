@@ -14,8 +14,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ReorderArrows } from '@/components/reorder-arrows'
 
-export function SessionForm({ onDone }: { onDone?: () => void }) {
+export function SessionForm() {
   const router = useRouter()
+  const [isOpen, setIsOpen] = useState(false)
   const [name, setName] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
@@ -36,16 +37,34 @@ export function SessionForm({ onDone }: { onDone?: () => void }) {
       }
       setName('')
       router.refresh()
-      onDone?.()
+      setIsOpen(false)
     })
+  }
+
+  if (!isOpen) {
+    return (
+      <Button type="button" variant="outline" onClick={() => setIsOpen(true)}>
+        + Nova sessão
+      </Button>
+    )
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-wrap gap-2 rounded-lg border border-border bg-subtle p-4">
-      <Input required placeholder="Nome da nova sessão" value={name} onChange={(e) => setName(e.target.value)} className="flex-1" />
+      <Input
+        required
+        autoFocus
+        placeholder="Nome da nova sessão"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        className="flex-1"
+      />
       {error && <p className="text-sm text-danger">{error}</p>}
       <Button type="submit" disabled={isPending}>
-        {isPending ? 'Criando...' : 'Nova sessão'}
+        {isPending ? 'Criando...' : 'Salvar'}
+      </Button>
+      <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>
+        Cancelar
       </Button>
     </form>
   )
