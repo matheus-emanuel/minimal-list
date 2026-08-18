@@ -1,6 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server'
 import { SessionForm, SessionHeader } from '@/components/session-form'
-import { CourseForm, CourseListItem } from './course-form'
+import { AddCourseButton } from '@/components/add-course-button'
+import { CourseListItem } from './course-form'
 
 export default async function AdminSessionsPage() {
   const supabase = await createServerClient()
@@ -20,7 +21,7 @@ export default async function AdminSessionsPage() {
         {(sessions ?? []).map((session) => (
           <section key={session.id} className="space-y-3 rounded-lg border border-border bg-subtle p-4">
             <SessionHeader session={session} otherSessions={(sessions ?? []).filter((s) => s.id !== session.id)} />
-            <CourseForm sessionId={session.id} />
+            <AddCourseButton sessionId={session.id} />
             <ul className="space-y-2">
               {(courses ?? [])
                 .filter((course) => course.session_id === session.id)

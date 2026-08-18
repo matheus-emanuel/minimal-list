@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { CourseRow } from '@/components/course-row'
 import { SessionForm, SessionHeader } from '@/components/session-form'
-import { CourseForm } from '@/app/admin/course-form'
+import { AddCourseButton } from '@/components/add-course-button'
 
 type Session = { id: string; name: string }
 type Course = {
@@ -85,7 +85,7 @@ export function TrainingList({
                     isSysadmin={isSysadmin}
                   />
                 ))}
-              {isSysadmin && !query.trim() && <CourseForm sessionId={session.id} />}
+              {isSysadmin && !query.trim() && <AddCourseButton sessionId={session.id} />}
             </CardContent>
           </Card>
         ))}
