@@ -273,6 +273,7 @@ export type Database = {
       }
       sessions: {
         Row: {
+          badge_image_path: string | null
           created_at: string
           id: string
           name: string
@@ -280,6 +281,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          badge_image_path?: string | null
           created_at?: string
           id?: string
           name: string
@@ -287,6 +289,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          badge_image_path?: string | null
           created_at?: string
           id?: string
           name?: string
@@ -312,6 +315,7 @@ export type Database = {
       }
     }
     Functions: {
+      generate_unique_username: { Args: { preferred: string }; Returns: string }
       is_sysadmin: { Args: never; Returns: boolean }
     }
     Enums: {

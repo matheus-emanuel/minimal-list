@@ -1,76 +1,72 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { createClient } from '@/lib/supabase/client'
 
 export default function SignupPage() {
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     setError(null)
-    setMessage(null)
 
     startTransition(async () => {
       const supabase = createClient()
       const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          data: { display_name: displayName || undefined },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
+        options: { data: { display_name: displayName } },
       })
       if (signUpError) {
         setError('Não foi possível criar a conta. Tente novamente.')
         return
       }
-      setMessage('Conta criada! Confira seu email para confirmar.')
+      // Confirmações por email estão desativadas (ver CLAUDE.md) — o signUp
+      // já retorna uma sessão válida, sem passo de confirmação.
+      window.location.assign('/')
     })
   }
 
   return (
-    <div className="mx-auto max-w-sm">
-      <h1 className="mb-4 text-xl font-bold">Criar conta</h1>
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <input
-          type="text"
-          placeholder="Nome de exibição (opcional)"
-          value={displayName}
-          onChange={(e) => setDisplayName(e.target.value)}
-          className="w-full rounded border p-2"
-        />
-        <input
-          type="email"
-          required
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded border p-2"
-        />
-        <input
-          type="password"
-          required
-          minLength={8}
-          placeholder="Senha (mín. 8 caracteres)"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded border p-2"
-        />
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        {message && <p className="text-sm text-green-700">{message}</p>}
-        <button
-          type="submit"
-          disabled={isPending}
-          className="w-full rounded bg-blue-700 px-4 py-2 text-sm text-white disabled:opacity-50"
-        >
+    <div className="mx-auto w-full max-w-sm space-y-6">
+      <div className="space-y-2 text-center">
+        <h1 className="text-2xl font-semibold tracking-tight text-strong">Criar conta</h1>
+        <p className="text-sm text-muted">
+          Sua conta serve apenas para você acompanhar seus próprios treinamentos — sem outras permissões.
+        </p>
+      </div>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="displayName">Nome</Label>
+          <Input id="displayName" required value={displayName} onChange={(e) => setDisplayName(e.target.value)} autoComplete="name" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="password">Senha</Label>
+          <Input
+            id="password"
+            type="password"
+            required
+            minLength={8}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password"
+          />
+        </div>
+        {error && <p className="text-sm text-danger">{error}</p>}
+        <Button type="submit" className="w-full" disabled={isPending}>
           {isPending ? 'Criando...' : 'Criar conta'}
-        </button>
+        </Button>
       </form>
     </div>
   )

@@ -1,12 +1,20 @@
 import type { Metadata } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 import { createServerClient } from '@/lib/supabase/server'
+import { ThemeProvider } from '@/components/theme-provider'
+import { ThemeToggle } from '@/components/theme-toggle'
+import { UserMenu } from '@/components/user-menu'
+import { Footer } from '@/components/footer'
+import { CookieConsent } from '@/components/cookie-consent'
 import './globals.css'
 
+const geistSans = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
+const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
+
 export const metadata: Metadata = {
-  title: 'Course Tracker',
-  description: 'Acompanhe seu progresso em cursos e certificações gratuitas',
+  title: 'minimal-list',
+  description: 'Treinamentos gratuitos que dão badge, de provedores oficiais como Databricks, Oracle Cloud e outros.',
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -15,41 +23,44 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     data: { user },
   } = await supabase.auth.getUser()
 
-  async function signOut() {
-    'use server'
-    const supabase = await createServerClient()
-    await supabase.auth.signOut()
-    redirect('/')
-  }
+  const profile = user
+    ? (await supabase.from('profiles').select('display_name, avatar_url, role').eq('id', user.id).single()).data
+    : null
 
   return (
-    <html lang="pt-BR">
-      <body className="min-h-screen bg-slate-50 text-slate-900">
-        <nav className="border-b border-slate-200 bg-white">
-          <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
-            <div className="flex gap-4">
-              <Link href="/" className="font-semibold">
-                Cursos
+    <html lang="pt-BR" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
+      <body className="flex min-h-screen flex-col bg-canvas text-strong">
+        <ThemeProvider>
+          <nav className="border-b border-border bg-subtle">
+            <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
+              <Link href="/" className="font-semibold text-strong">
+                minimal-list
               </Link>
-              <Link href="/badges">Mural de Badges</Link>
-              {user && <Link href="/admin">Admin</Link>}
+              <div className="flex items-center gap-4 text-sm">
+                {user && (
+                  <Link href="/badges" className="text-muted hover:text-strong">
+                    Mural de Badges
+                  </Link>
+                )}
+                <ThemeToggle />
+                {user ? (
+                  <UserMenu
+                    displayName={profile?.display_name ?? null}
+                    email={user.email ?? ''}
+                    avatarUrl={profile?.avatar_url ?? null}
+                  />
+                ) : (
+                  <Link href="/login" className="text-muted hover:text-strong">
+                    Entrar
+                  </Link>
+                )}
+              </div>
             </div>
-            <div>
-              {user ? (
-                <form action={signOut}>
-                  <button type="submit" className="text-sm text-slate-600">
-                    Sair
-                  </button>
-                </form>
-              ) : (
-                <Link href="/login" className="text-sm text-slate-600">
-                  Entrar
-                </Link>
-              )}
-            </div>
-          </div>
-        </nav>
-        <main className="mx-auto max-w-4xl px-4 py-6">{children}</main>
+          </nav>
+          <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-8">{children}</main>
+          <Footer />
+          <CookieConsent />
+        </ThemeProvider>
       </body>
     </html>
   )

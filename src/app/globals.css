@@ -1,3 +1,87 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Acessibilidade: respeita prefers-reduced-motion (WCAG 2.3.3) — quem
+   configura o SO pra reduzir movimento não deve sentir náusea por causa
+   de transições/animações daqui. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Light — grey page, white cards, near-black text. */
+:root {
+  --color-canvas: #dcdce0;
+  --color-subtle: #ffffff;
+  --color-border: #71717a;
+  --color-muted: #3f3f46;
+  --color-body: #000000;
+  --color-strong: #000000;
+  --color-ink: #000000;
+  --color-danger: #7f1d1d;
+}
+
+/* Dark (default theme) — near-black with subtle greys. */
+.dark {
+  --color-canvas: #09090b;
+  --color-subtle: #18181b;
+  --color-border: #27272a;
+  --color-muted: #a1a1aa;
+  --color-body: #d4d4d8;
+  --color-strong: #e4e4e7;
+  --color-ink: #fafafa;
+  --color-danger: #ef4444;
+}
+
+@theme inline {
+  --color-canvas: var(--color-canvas);
+  --color-subtle: var(--color-subtle);
+  --color-border: var(--color-border);
+  --color-muted: var(--color-muted);
+  --color-body: var(--color-body);
+  --color-strong: var(--color-strong);
+  --color-ink: var(--color-ink);
+  --color-danger: var(--color-danger);
+
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  /* color-scheme casa com o tema pra controles nativos (checkbox, select,
+     scrollbar) não renderizarem chrome escuro sobre UI clara ou vice-versa. */
+  html {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-strong);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--color-strong);
+    color: var(--color-canvas);
+  }
+}

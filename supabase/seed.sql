@@ -1,16 +1,24 @@
 -- Seed data imported from "docs/certifications-backlog.md" (2026-08-06).
 -- Applied automatically by `supabase db reset`, which resets the DB before
 -- reseeding — no ON CONFLICT handling needed for local dev idempotency.
+--
+-- sessions.badge_image_path is a provider-level logo fallback (DESIGN
+-- Decision 3 + migration 0015): every course below has no badge of its own,
+-- so all of them inherit their session's logo automatically. Files live in
+-- the "course-badges" bucket under providers/*.svg — on a fresh
+-- `supabase db reset`, re-upload them once (see BUILD_REPORT for the exact
+-- curl commands); seed.sql only sets the DB column, Storage objects aren't
+-- part of a SQL migration/seed.
 
-insert into public.sessions (name) values
-  ('Scrum'),
-  ('SQL'),
-  ('Databricks - Fundamentos'),
-  ('Databricks - Plataforma e Arquitetura'),
-  ('Databricks - Engenharia de Dados'),
-  ('Databricks - IA Generativa'),
-  ('Databricks - Parceiros e Indústria'),
-  ('Oracle Cloud');
+insert into public.sessions (name, badge_image_path) values
+  ('Scrum', 'providers/scrum.svg'),
+  ('SQL', 'providers/hackerrank.svg'),
+  ('Databricks - Fundamentos', 'providers/databricks.svg'),
+  ('Databricks - Plataforma e Arquitetura', 'providers/databricks.svg'),
+  ('Databricks - Engenharia de Dados', 'providers/databricks.svg'),
+  ('Databricks - IA Generativa', 'providers/databricks.svg'),
+  ('Databricks - Parceiros e Indústria', 'providers/databricks.svg'),
+  ('Oracle Cloud', 'providers/oracle.svg');
 
 insert into public.courses (title, url, session_id, tags) values
   ('Scrum Fundamentals Certified (SFC) – Scrumstudy', 'https://www.scrumstudy.com/portuguese/scrum-fundamentals-certified', (select id from public.sessions where name = 'Scrum'), '{}'),
