@@ -1,20 +1,3 @@
-import type { NextConfig } from 'next'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseHostname = supabaseUrl ? new URL(supabaseUrl).hostname : undefined
-
-const nextConfig: NextConfig = {
-  images: {
-    remotePatterns: supabaseHostname
-      ? [
-          {
-            protocol: 'https',
-            hostname: supabaseHostname,
-            pathname: '/storage/v1/object/public/**',
-          },
-        ]
-      : [],
-  },
-}
-
-export default nextConfig
+// Next.js hard-requires a next.config.* file at the project root — no --config
+// flag exists. The real config lives in src/config/next.config.ts; this just points there.
+export { default } from './src/config/next.config'

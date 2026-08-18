@@ -1,11 +1,4 @@
-import type { Config } from 'tailwindcss'
-
-const config: Config = {
-  content: ['./app/**/*.{ts,tsx}'],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}
-
-export default config
+// Next.js's built-in Tailwind v3 integration only auto-discovers
+// tailwind.config.* at the project root. The real config lives in
+// src/config/tailwind.config.ts; this just points there.
+export { default } from './src/config/tailwind.config'

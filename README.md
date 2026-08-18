@@ -36,15 +36,21 @@ npm run dev
 ## Estrutura do projeto
 
 ```text
-app/
-  (auth)/login, (auth)/signup   — páginas de autenticação
-  admin/                        — gerenciamento de conteúdo para sysadmins (protegido por role)
-  badges/                       — mural público de badges (uploads da comunidade + reações)
-  page.tsx                      — lista pública de treinamentos
-lib/
-  actions/                      — Server Actions, um arquivo por recurso
-  supabase/                     — clients Supabase (client/server/middleware)
-  validation/                   — schemas Zod
+src/
+  app/
+    (auth)/login, (auth)/signup — páginas de autenticação
+    admin/                      — gerenciamento de conteúdo para sysadmins (protegido por role)
+    badges/                     — mural público de badges (uploads da comunidade + reações)
+    page.tsx                    — lista pública de treinamentos
+  middleware.ts                 — middleware de sessão Supabase (Next.js exige em src/ ou na raiz)
+  lib/
+    actions/                    — Server Actions, um arquivo por recurso
+    supabase/                   — clients Supabase (client/server/middleware)
+    validation/                 — schemas Zod
+tests/
+  e2e/                          — testes end-to-end (Playwright)
+  rls/                          — testes de integração de RLS contra Postgres real (Vitest)
+  playwright.config.ts, vitest.config.ts — configs dos test runners
 supabase/
   migrations/                   — schema sequencial e aditivo (000N_*.sql)
   seed.sql                      — dados de seed, com origem em docs/certifications-backlog.md
@@ -52,6 +58,8 @@ docs/
   certifications-backlog.md     — backlog de curadoria em andamento (o que já entrou, o que falta)
 .claude/sdd/                    — histórico de spec-driven development (brainstorm → define → design → build → ship)
 ```
+
+Na raiz do projeto ficam apenas os arquivos que as próprias ferramentas (npm, Next.js, TypeScript, ESLint, PostCSS) exigem nesse local por convenção — `package.json`, `tsconfig.json`, `next.config.ts`, `eslint.config.mjs`, `postcss.config.mjs`, `tailwind.config.ts`, `.env*`, `.gitignore`, `CLAUDE.md`, `README.md`. Nenhum deles pode ser movido sem quebrar a auto-detecção das ferramentas.
 
 ## Comandos
 

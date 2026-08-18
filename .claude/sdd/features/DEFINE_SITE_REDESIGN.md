@@ -1,4 +1,4 @@
-# DEFINE: Site Redesign — Elegant Public Certification Tracker
+# DEFINE: Site Redesign — Elegant Provider Badge-Giving Training Tracker
 
 > Redesign minimal-list into an elegant, responsive, dark-default light/dark site with richer per-row tracking, official badges, public profiles, and sysadmin content management — built on patterns proven in caixa-forte-app.
 
@@ -9,7 +9,7 @@
 | **Feature** | SITE_REDESIGN |
 | **Date** | 2026-08-17 |
 | **Author** | define-agent |
-| **Status** | Ready for Design |
+| **Status** | ✅ Complete (Designed) |
 | **Clarity Score** | 14/15 |
 
 ---
@@ -50,6 +50,7 @@ What success looks like (prioritized):
 | **MUST** | Users can set their display name and photo on a "Perfil" page; the top-right menu shows "Olá {name}" (falling back to email, with an elegant prompt to set a name if missing), a Perfil link, and Log Out |
 | **MUST** | A regular user can export their full tracked list as a single JSON file (title, link, session, status, badge image URL, timestamp per row) |
 | **MUST** | Footer clearly states that new sysadmin/content-manager accounts are created only by the site's authors |
+| **MUST** | Cookie-consent banner (LGPD/GDPR-style), matching the proven pattern already shipped in the author's other apps (`caixa-forte-app`, `amazing-school-app`, `foco-contabil`, `careconnect`): fixed bottom banner, "Aceitar tudo" / "Só essenciais" choice, decision persisted client-side so it never reappears once decided, links to a real Privacy Policy page |
 | **SHOULD** | Regular-user UI clearly and professionally communicates that the account's only capability is managing their own list — no other rights |
 | **COULD** | None deferred to this cycle beyond what's listed in Out of Scope |
 
@@ -74,6 +75,7 @@ Measurable outcomes:
 - [ ] JSON export file contains exactly the rows currently shown in the user's list, one object per row, with all 5 required fields present
 - [ ] A Mural entry exists for 100% of a user's "done" rows, and reflects a row's badge image update within one page load of an admin change (no manual sync/cache-bust step)
 - [ ] Username collisions are rejected at signup and at profile-rename time with a clear inline error, 0 duplicate usernames possible by construction (DB unique constraint)
+- [ ] Cookie-consent banner shows on first visit for 100% of visitors (authenticated or not), never reappears once a choice is recorded, and its Privacy Policy link resolves to a real page (not a 404)
 
 ---
 
@@ -91,6 +93,7 @@ Measurable outcomes:
 | AT-008 | Username uniqueness | A username `alice` is already claimed | A different user attempts to set their profile username to `alice` | The rename is rejected with a clear inline error; their profile URL remains unchanged |
 | AT-009 | Regular-user permission clarity | A regular user viewing their own profile or account area | They look for any content-management controls (create/edit/delete rows) | No such controls are visible or reachable; UI text clearly states their account only manages their personal list |
 | AT-010 | Greeting fallback | A signed-in user who has never set a display name | They view the top-right menu | It reads "Olá {email}" with an elegant, visible prompt/link to set a name in Perfil |
+| AT-011 | Cookie consent persistence | A first-time visitor with no stored consent decision | They click "Aceitar tudo" (or "Só essenciais"), then reload or navigate to another route | The banner does not reappear; the decision persists across reloads and navigation |
 
 ---
 
@@ -120,6 +123,7 @@ Explicitly NOT included in this feature:
 | Security | `.env.local` (service role key and other secrets) must remain gitignored | Any admin/data-fixing scripts must run as one-off, uncommitted scripts, consistent with current `.gitignore` (already verified correct) |
 | Resource | Small content scale (24 seed rows today, low hundreds expected) | No pagination/virtualization needed for the row list; the "spacious, card-like" layout preference is performance-safe at this scale |
 | Timeline | No fixed deadline stated by the user | Sequencing and phasing are left to Design/Build, not schedule-driven |
+| Content accuracy | The cookie-consent/Privacy Policy pattern is ported from other apps that handle financial/health data — their exact claims don't apply here | Privacy Policy copy must be rewritten to accurately describe what `minimal-list` actually collects (Supabase auth: email, optional display name/photo; localStorage: theme + cookie-consent choice; no analytics/tracking installed), not copy-pasted verbatim |
 
 ---
 
@@ -129,7 +133,7 @@ Explicitly NOT included in this feature:
 
 | Aspect | Value | Notes |
 |--------|-------|-------|
-| **Deployment Location** | `app/` (routes), `lib/actions/` (server actions), `lib/supabase/` (clients), `supabase/migrations/` (schema) | Extends the existing Next.js 15 App Router structure; no new top-level project |
+| **Deployment Location** | `src/app/` (routes), `src/lib/actions/` (server actions), `src/lib/supabase/` (clients), `supabase/migrations/` (schema) | Repo now uses the Next.js src-directory layout (adopted during repo reorg, 2026-08-17) — all new app code goes under `src/`, not project root |
 | **KB Domains** | `supabase` | RLS, storage bucket, and auth patterns for the new/extended tables (`profiles.username`, session reorder, `completions` status, badge image field) |
 | **IaC Impact** | Modify existing | New Supabase migrations continuing the existing numbered sequence (`0007_*.sql` onward): theme has no infra impact; sessions-as-reorderable-entities, badge image field, completion status, and username all require schema changes and RLS policy updates following the established `is_sysadmin()` pattern |
 
@@ -157,7 +161,8 @@ Assumptions that if wrong could invalidate the design:
 | A-002 | The existing RLS pattern (`is_sysadmin()` SECURITY DEFINER helper, base GRANT + policy layering) extends cleanly to new/modified tables (username, sort_order, badge image, completion status) | RLS policy design would need a different approach for one or more new tables | [ ] |
 | A-003 | The Tailwind v3 → v4 migration does not break the existing Playwright/Vitest test suite's selectors/assertions | Test suite needs parallel updates alongside the visual redesign, adding scope to Build | [ ] |
 | A-004 | caixa-forte-app's login/remember-password mechanism is directly portable, since both apps share the same `@supabase/ssr` client-side auth stack | The remember-password and show-password logic would need non-trivial adaptation rather than a direct port | [ ] |
-| A-005 | The "reset" state of the 3-state interest button deletes the underlying `completions` row entirely (mirroring the current toggle-off behavior in `lib/actions/completions.ts`), rather than persisting an explicit "not interested" status | A third status value would be needed in the schema, changing the `completions` table shape | [ ] |
+| A-005 | The "reset" state of the 3-state interest button deletes the underlying `completions` row entirely (mirroring the current toggle-off behavior in `src/lib/actions/completions.ts`), rather than persisting an explicit "not interested" status | A third status value would be needed in the schema, changing the `completions` table shape | [ ] |
+| A-006 | The cookie-consent UX pattern (localStorage-persisted decision, "essential-only" vs. "accept all", no cookie banner library) is directly portable since `minimal-list`'s actual data footprint (Supabase auth session + theme preference, no analytics/trackers) is simpler than the finance/health apps it's borrowed from | If third-party analytics/trackers are ever added, the "essential-only" choice needs to actually gate them — not just be cosmetic, as it can be today | [ ] |
 
 **Note:** Validate critical assumptions before DESIGN phase. Unvalidated assumptions become risks.
 
@@ -197,6 +202,7 @@ Everything else has explicit answers from the BRAINSTORM document — no other b
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2026-08-17 | define-agent | Initial version, derived from BRAINSTORM_SITE_REDESIGN.md |
+| 1.1 | 2026-08-17 | define-agent | Corrected title/framing to "provider badge-giving training tracker"; added pt-BR UI constraint; added cookie-consent banner + Privacy Policy goal (MUST), success criterion, and AT-011; updated Deployment Location to the `src/` layout adopted during repo reorg |
 
 ---
 
