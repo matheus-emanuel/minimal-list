@@ -51,11 +51,22 @@ export function TrainingList({
 
   const visibleSessionIds = useMemo(() => new Set(filteredCourses.map((c) => c.session_id)), [filteredCourses])
 
+  const visibleSessions = sessions.filter((session) => !query.trim() || visibleSessionIds.has(session.id))
+
+  // Running count so rank badges number 1..N across the whole page, not
+  // restarting at 1 inside each session.
+  let startIndex = 0
+  const startIndexBySession = new Map<string, number>()
+  for (const session of visibleSessions) {
+    startIndexBySession.set(session.id, startIndex)
+    startIndex += filteredCourses.filter((course) => course.session_id === session.id).length
+  }
+
   return (
     <div className="space-y-8">
-      <p className="text-sm text-muted">
-        <span className="font-semibold text-strong tabular-nums">{courses.length}</span> treinamentos gratuitos que
-        dão badge
+      <p className="flex items-baseline gap-2 text-sm text-muted">
+        <span className="text-3xl font-bold tabular-nums text-strong">{courses.length}</span>
+        treinamentos gratuitos que dão badge
       </p>
       <Input
         type="search"
@@ -65,30 +76,29 @@ export function TrainingList({
         aria-label="Buscar treinamentos"
       />
       {isSysadmin && <SessionForm />}
-      {sessions
-        .filter((session) => !query.trim() || visibleSessionIds.has(session.id))
-        .map((session) => (
-          <Card key={session.id}>
-            <CardHeader className="flex-row items-center gap-3 space-y-0">
-              {isSysadmin ? (
-                <SessionHeader session={session} otherSessions={sessions.filter((s) => s.id !== session.id)} />
-              ) : (
-                <CardTitle>{session.name}</CardTitle>
-              )}
-            </CardHeader>
-            <CardContent className="space-y-1">
-              <CourseDragList
-                sessionId={session.id}
-                courses={filteredCourses.filter((course) => course.session_id === session.id)}
-                statusByCourse={statusByCourse}
-                isAuthenticated={isAuthenticated}
-                isSysadmin={isSysadmin}
-                canReorder={isSysadmin && !query.trim()}
-              />
-              {isSysadmin && !query.trim() && <AddCourseButton sessionId={session.id} />}
-            </CardContent>
-          </Card>
-        ))}
+      {visibleSessions.map((session) => (
+        <Card key={session.id}>
+          <CardHeader className="flex-row items-center gap-3 space-y-0">
+            {isSysadmin ? (
+              <SessionHeader session={session} otherSessions={sessions.filter((s) => s.id !== session.id)} />
+            ) : (
+              <CardTitle>{session.name}</CardTitle>
+            )}
+          </CardHeader>
+          <CardContent className="space-y-1">
+            <CourseDragList
+              sessionId={session.id}
+              courses={filteredCourses.filter((course) => course.session_id === session.id)}
+              startIndex={startIndexBySession.get(session.id) ?? 0}
+              statusByCourse={statusByCourse}
+              isAuthenticated={isAuthenticated}
+              isSysadmin={isSysadmin}
+              canReorder={isSysadmin && !query.trim()}
+            />
+            {isSysadmin && !query.trim() && <AddCourseButton sessionId={session.id} />}
+          </CardContent>
+        </Card>
+      ))}
     </div>
   )
 }

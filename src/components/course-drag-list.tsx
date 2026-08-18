@@ -28,6 +28,7 @@ function RankBadge({ n }: { n: number }) {
 export function CourseDragList({
   sessionId,
   courses,
+  startIndex,
   statusByCourse,
   isAuthenticated,
   isSysadmin,
@@ -35,6 +36,7 @@ export function CourseDragList({
 }: {
   sessionId: string
   courses: Course[]
+  startIndex: number
   statusByCourse: Record<string, 'interested' | 'done'>
   isAuthenticated: boolean
   isSysadmin: boolean
@@ -86,7 +88,7 @@ export function CourseDragList({
           onDragEnd={canReorder ? handleDrop : undefined}
           className={cn('flex items-center gap-2', canReorder && 'cursor-grab active:cursor-grabbing')}
         >
-          <RankBadge n={index + 1} />
+          <RankBadge n={startIndex + index + 1} />
           <div className="min-w-0 flex-1">
             <CourseRow
               course={course}
