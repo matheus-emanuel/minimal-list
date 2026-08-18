@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { CourseRow } from '@/components/course-row'
+import { CourseDragList } from '@/components/course-drag-list'
 import { SessionForm, SessionHeader } from '@/components/session-form'
 import { AddCourseButton } from '@/components/add-course-button'
 
@@ -53,6 +53,10 @@ export function TrainingList({
 
   return (
     <div className="space-y-8">
+      <p className="text-sm text-muted">
+        <span className="font-semibold text-strong tabular-nums">{courses.length}</span> treinamentos gratuitos que
+        dão badge
+      </p>
       <Input
         type="search"
         placeholder="Buscar por nome, tag ou provedor..."
@@ -73,18 +77,14 @@ export function TrainingList({
               )}
             </CardHeader>
             <CardContent className="space-y-1">
-              {filteredCourses
-                .filter((course) => course.session_id === session.id)
-                .map((course) => (
-                  <CourseRow
-                    key={course.id}
-                    course={course}
-                    badgeUrl={course.badgeUrl}
-                    initialStatus={statusByCourse[course.id] ?? 'neutral'}
-                    isAuthenticated={isAuthenticated}
-                    isSysadmin={isSysadmin}
-                  />
-                ))}
+              <CourseDragList
+                sessionId={session.id}
+                courses={filteredCourses.filter((course) => course.session_id === session.id)}
+                statusByCourse={statusByCourse}
+                isAuthenticated={isAuthenticated}
+                isSysadmin={isSysadmin}
+                canReorder={isSysadmin && !query.trim()}
+              />
               {isSysadmin && !query.trim() && <AddCourseButton sessionId={session.id} />}
             </CardContent>
           </Card>
