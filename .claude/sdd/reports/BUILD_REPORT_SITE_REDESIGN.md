@@ -118,7 +118,7 @@ No new e2e Playwright specs were written this build (rows 49–56 of the DESIGN 
 
 ## Blockers
 
-None. One manual step remains outside this build's scope (matches DESIGN Decision 5): disabling "Confirm email" in the **remote** Supabase project's Auth dashboard — already set correctly in local `supabase/config.toml`, but the remote project's dashboard setting was never touched this session (no migrations were pushed to production).
+None. **Update 2026-08-18, post-merge:** all 11 migrations (0007–0017) were pushed to the real Supabase project via `supabase db push` (never `db reset` — no data loss; all 8 real sessions, 24 real courses, and both real sysadmin accounts verified intact afterward), the 4 provider logos were re-uploaded to production Storage and assigned, and `mailer_autoconfirm` was enabled on the real project via the Supabase Management API (DESIGN Decision 5). The live site (`minimal-list-ten.vercel.app`) now renders the full list. Nothing outstanding on the deployment side.
 
 ---
 

@@ -36,7 +36,7 @@ A curated, public list of free, badge-giving training from official providers (D
 This project uses the SDD workflow (`/brainstorm` → `/define` → `/design` → `/build` → `/ship`):
 
 - `.claude/sdd/archive/COURSE_TRACKER/` — the original build, shipped 2026-08-06.
-- `.claude/sdd/features/` — **SITE_REDESIGN** is built (`.claude/sdd/reports/BUILD_REPORT_SITE_REDESIGN.md`), with one flagged gap: no Playwright e2e specs were written — verification was done live against the running app instead. Not yet `/ship`ped.
+- `.claude/sdd/features/` — **SITE_REDESIGN** is built, merged (PR #1), and deployed to production (`.claude/sdd/reports/BUILD_REPORT_SITE_REDESIGN.md`) — all migrations pushed to the real Supabase project, provider logos uploaded, email auto-confirm enabled. One flagged gap: no Playwright e2e specs were written — verification was done live against the running app instead. Not yet `/ship`ped (archived).
 
 Check `.claude/sdd/features/` before starting new work — an in-progress DEFINE or DESIGN doc for the same area means the decisions are already made; don't re-derive them.
 
