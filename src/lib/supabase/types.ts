@@ -1,7 +1,3 @@
-// Generated via `npm run db:types` (supabase gen types typescript --linked) against
-// the real "lista-minima" Supabase project, with `role` manually tightened from
-// `string` to the CHECK-constrained union (the generator doesn't infer CHECK enums).
-
 export type Json =
   | string
   | number
@@ -11,11 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.15"
-  }
   graphql_public: {
     Tables: {
       [_ in never]: never
@@ -164,16 +155,19 @@ export type Database = {
         Row: {
           completed_at: string
           course_id: string
+          status: string
           user_id: string
         }
         Insert: {
           completed_at?: string
           course_id: string
+          status?: string
           user_id: string
         }
         Update: {
           completed_at?: string
           course_id?: string
+          status?: string
           user_id?: string
         }
         Relationships: [
@@ -195,33 +189,39 @@ export type Database = {
       }
       courses: {
         Row: {
-          category: string
+          badge_image_path: string | null
           created_at: string
           created_by: string | null
           description: string | null
           id: string
+          session_id: string
+          sort_order: number
           tags: string[]
           title: string
           updated_at: string
           url: string
         }
         Insert: {
-          category: string
+          badge_image_path?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
           id?: string
+          session_id: string
+          sort_order?: number
           tags?: string[]
           title: string
           updated_at?: string
           url: string
         }
         Update: {
-          category?: string
+          badge_image_path?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
           id?: string
+          session_id?: string
+          sort_order?: number
           tags?: string[]
           title?: string
           updated_at?: string
@@ -235,6 +235,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "courses_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
         ]
       }
       profiles: {
@@ -243,27 +250,66 @@ export type Database = {
           created_at: string
           display_name: string
           id: string
-          role: 'user' | 'sysadmin'
+          role: string
+          username: string
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
           display_name: string
           id: string
-          role?: 'user' | 'sysadmin'
+          role?: string
+          username: string
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
           display_name?: string
           id?: string
-          role?: 'user' | 'sysadmin'
+          role?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      sessions: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
     }
     Views: {
-      [_ in never]: never
+      mural_entries: {
+        Row: {
+          caption: string | null
+          course_id: string | null
+          created_at: string | null
+          id: string | null
+          image_path: string | null
+          source: string | null
+          storage_bucket: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       is_sysadmin: { Args: never; Returns: boolean }
@@ -402,3 +448,4 @@ export const Constants = {
     Enums: {},
   },
 } as const
+

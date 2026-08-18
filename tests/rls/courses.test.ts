@@ -4,16 +4,21 @@ import { anonClient, createTestUser, clientForUser, cleanupUser, promoteToSysadm
 describe('courses RLS', () => {
   let user: { id: string; email: string }
   let sysadmin: { id: string; email: string }
+  let sessionId: string
   let courseId = ''
 
   beforeAll(async () => {
     user = await createTestUser('courses-user')
     sysadmin = await createTestUser('courses-admin')
     await promoteToSysadmin(sysadmin.id)
+
+    const { data } = await serviceClient.from('sessions').insert({ name: 'Courses Test Session' }).select().single()
+    sessionId = data!.id
   })
 
   afterAll(async () => {
     if (courseId) await serviceClient.from('courses').delete().eq('id', courseId)
+    await serviceClient.from('sessions').delete().eq('id', sessionId)
     await cleanupUser(user.id)
     await cleanupUser(sysadmin.id)
   })
@@ -27,7 +32,7 @@ describe('courses RLS', () => {
     const clientUser = await clientForUser(user.email)
     const { error } = await clientUser
       .from('courses')
-      .insert({ title: 'Should fail', url: 'https://example.com', category: 'Test' })
+      .insert({ title: 'Should fail', url: 'https://example.com', session_id: sessionId })
     expect(error).not.toBeNull()
   })
 
@@ -36,7 +41,7 @@ describe('courses RLS', () => {
 
     const { data: inserted, error: insertError } = await clientAdmin
       .from('courses')
-      .insert({ title: 'RLS Test Course', url: 'https://example.com', category: 'Test' })
+      .insert({ title: 'RLS Test Course', url: 'https://example.com', session_id: sessionId })
       .select()
       .single()
     expect(insertError).toBeNull()
