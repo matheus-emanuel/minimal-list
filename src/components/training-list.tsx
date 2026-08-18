@@ -64,9 +64,9 @@ export function TrainingList({
 
   return (
     <div className="space-y-8">
-      <p className="text-sm text-muted">
-        <span className="font-semibold text-strong tabular-nums">{courses.length}</span> treinamentos gratuitos que
-        dão badge
+      <p className="flex items-baseline gap-2 text-sm text-muted">
+        <span className="text-3xl font-bold tabular-nums text-strong">{courses.length}</span>
+        treinamentos gratuitos que dão badge
       </p>
       <Input
         type="search"
