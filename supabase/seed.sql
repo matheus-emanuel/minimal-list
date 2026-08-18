@@ -22,7 +22,8 @@ insert into public.sessions (name, badge_image_path) values
   ('Databricks - Academy Accreditation', 'providers/databricks.svg'),
   ('Databricks - Knowledge Badge', 'providers/databricks.svg'),
   ('Databricks - Partner Training', 'providers/databricks.svg'),
-  ('Oracle Cloud Infrastructure (OCI) - Certificação', 'providers/oracle.svg');
+  ('Oracle Cloud Infrastructure (OCI) - Certificação', 'providers/oracle.svg'),
+  ('AWS - Training Badge', 'providers/aws.svg');
 
 insert into public.courses (title, url, session_id, tags) values
   ('Scrum Fundamentals Certified (SFC) – Scrumstudy', 'https://www.scrumstudy.com/portuguese/scrum-fundamentals-certified', (select id from public.sessions where name = 'Scrumstudy - Certificação'), '{}'),
@@ -39,6 +40,8 @@ insert into public.courses (title, url, session_id, tags) values
   ('Academy Accreditation - AI Agent Fundamentals', 'https://partner-academy.databricks.com/learn/course/view/elearning/4503/ai-agent-fundamentals-accreditation', (select id from public.sessions where name = 'Databricks - Academy Accreditation'), '{genai,agents}'),
   ('Academy Accreditation - Prompt Engineering Fundamentals', 'https://partner-academy.databricks.com/learn/courses/4733/prompt-engineering-fundamentals/', (select id from public.sessions where name = 'Databricks - Academy Accreditation'), '{genai,prompt-engineering}'),
 
+  ('Knowledge Badge - Analytics Fundamentals', 'https://partner-academy.databricks.com/learn/courses/5205/analytics-fundamentals', (select id from public.sessions where name = 'Databricks - Knowledge Badge'), '{analytics}'),
+  ('Knowledge Badge - Generative AI Application Evaluation and Governance', 'https://partner-academy.databricks.com/learn/course/2717/generative-ai-application-evaluation-and-governance?hash=2f711d3b0e6f90d83a77d3eb0e29dd8b4f1e973e&generated_by=815465', (select id from public.sessions where name = 'Databricks - Knowledge Badge'), '{genai,governance}'),
   ('Knowledge Badge - Data Ingestion with Lakeflow Connect', 'https://partner-academy.databricks.com/learn/course/2963/data-ingestion-with-lakeflow-connect', (select id from public.sessions where name = 'Databricks - Knowledge Badge'), '{lakeflow}'),
   ('Knowledge Badge - SQL Analytics on Databricks', 'https://partner-academy.databricks.com/learn/courses/3926/sql-analytics-on-databricks', (select id from public.sessions where name = 'Databricks - Knowledge Badge'), '{sql}'),
   ('Knowledge Badge - Data Warehousing with Databricks', 'https://partner-academy.databricks.com/learn/courses/4021/data-warehousing-with-databricks', (select id from public.sessions where name = 'Databricks - Knowledge Badge'), '{}'),
@@ -53,7 +56,12 @@ insert into public.courses (title, url, session_id, tags) values
 
   ('Oracle Cloud Infrastructure Foundations 2025 Certified Associate', 'https://mylearn.oracle.com/ou/learning-path/become-an-oci-foundations-associate-2025/148056', (select id from public.sessions where name = 'Oracle Cloud Infrastructure (OCI) - Certificação'), '{}'),
   ('Oracle Cloud Data Platform Foundations 2025 Certified Foundations Associate', 'https://mylearn.oracle.com/ou/learning-path/become-an-oracle-data-platform-foundations-associate-2025/148510', (select id from public.sessions where name = 'Oracle Cloud Infrastructure (OCI) - Certificação'), '{}'),
-  ('Oracle Cloud Infrastructure Certified AI Foundations Associate', 'https://mylearn.oracle.com/ou/learning-path/become-an-oci-ai-foundations-associate-2025/147781', (select id from public.sessions where name = 'Oracle Cloud Infrastructure (OCI) - Certificação'), '{genai}');
+  ('Oracle Cloud Infrastructure Certified AI Foundations Associate', 'https://mylearn.oracle.com/ou/learning-path/become-an-oci-ai-foundations-associate-2025/147781', (select id from public.sessions where name = 'Oracle Cloud Infrastructure (OCI) - Certificação'), '{genai}'),
+  ('Agentic AI Certified Foundations Associate', 'https://mylearn.oracle.com/ou/learning-path/become-an-oracle-agentic-ai-foundations-associate/163239', (select id from public.sessions where name = 'Oracle Cloud Infrastructure (OCI) - Certificação'), '{genai,agents}'),
+  ('AI Database Foundations Associate', 'https://mylearn.oracle.com/ou/learning-path/become-an-oracle-ai-database-foundations-associate-free/163611', (select id from public.sessions where name = 'Oracle Cloud Infrastructure (OCI) - Certificação'), '{genai,database}'),
+
+  ('AWS SimuLearn - Cloud Practitioner - Training Badge', 'https://skillbuilder.aws/learning-plan/EKHCUEWUUC/aws-simulearn-cloud-practitioner/1UQVR262ZB', (select id from public.sessions where name = 'AWS - Training Badge'), '{cloud-practitioner}'),
+  ('AWS SimuLearn - AI Practitioner - Training Badge', 'https://skillbuilder.aws/learning-plan/3HCD821CNZ/aws-simulearn-ai-practitioner-portugus/V48Y6KYC31', (select id from public.sessions where name = 'AWS - Training Badge'), '{genai,ai-practitioner}');
 
 update public.courses
   set description = 'Anteriormente chamado de "Databricks Lakehouse Fundamentals" — mesmo accreditation, nome atualizado pela Databricks.'
