@@ -60,7 +60,9 @@ export default async function HomePage() {
     <div className="space-y-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-strong">Treinamentos gratuitos que dão badge</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-strong">
+            <span className="text-3xl font-bold tabular-nums">{coursesWithBadge.length}</span> Treinamentos gratuitos que dão badge
+          </h1>
           <p className="mt-1 text-sm text-muted">Cursos oficiais de provedores como Databricks, Oracle Cloud e outros.</p>
         </div>
         {user && <ExportButton rows={exportRows} />}
