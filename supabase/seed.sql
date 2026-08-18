@@ -1,4 +1,4 @@
--- Seed data imported from "Cursos indicados.md" (2026-08-06).
+-- Seed data imported from "docs/certifications-backlog.md" (2026-08-06).
 -- Applied automatically by `supabase db reset`, which resets the DB before
 -- reseeding — no ON CONFLICT handling needed for local dev idempotency.
 
